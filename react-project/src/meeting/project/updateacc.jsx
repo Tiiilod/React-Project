@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function UpdateAcc() {
   const [userId, setUserId] = useState("");
@@ -10,6 +11,17 @@ export default function UpdateAcc() {
     avatar: "",
   });
   const [message, setMessage] = useState("");
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.8 } },
+    exit: { opacity: 0, transition: { duration: 0.5 } },
+  };
+
+  const formVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.2 } },
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -39,25 +51,44 @@ export default function UpdateAcc() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6">
+    <motion.div
+      className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-green-200 via-green-300 to-green-400 p-4" // Gradient Hijau
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+      <motion.div
+        className="w-full max-w-md bg-white shadow-lg rounded-lg p-8 backdrop-blur-md bg-opacity-80"
+        variants={formVariants}
+      >
         <Link
           to="/help"
-          className="inline-block mb-4 text-blue-500 hover:text-blue-700"
+          className="inline-block mb-6 text-blue-500 hover:text-blue-700 transition duration-300"
+          variants={formVariants}
+          whileHover={{ scale: 1.1 }}
         >
           &larr; Back
         </Link>
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+        <motion.h1
+          className="text-3xl font-bold text-gray-800 mb-8 text-center"
+          variants={formVariants}
+        >
           Update Account
-        </h1>
-        <form onSubmit={handleUpdateUser} className="space-y-4">
+        </motion.h1>
+        <form
+          onSubmit={handleUpdateUser}
+          className="space-y-6"
+          variants={formVariants}
+        >
           <input
             type="text"
             name="userId"
             placeholder="User ID"
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+            required
           />
           <input
             type="text"
@@ -65,7 +96,7 @@ export default function UpdateAcc() {
             placeholder="Name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
           />
           <input
             type="email"
@@ -73,7 +104,7 @@ export default function UpdateAcc() {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
           />
           <input
             type="text"
@@ -81,19 +112,26 @@ export default function UpdateAcc() {
             placeholder="Avatar URL"
             value={formData.avatar}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
           />
-          <button
+          <motion.button
             type="submit"
-            className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+            className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition duration-300"
+            whileHover={{ scale: 1.05 }}
+            variants={formVariants}
           >
             Update User
-          </button>
+          </motion.button>
           {message && (
-            <p className="text-center text-sm text-gray-700 mt-2">{message}</p>
+            <motion.p
+              className="text-center text-sm text-gray-700 mt-4"
+              variants={formVariants}
+            >
+              {message}
+            </motion.p>
           )}
         </form>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

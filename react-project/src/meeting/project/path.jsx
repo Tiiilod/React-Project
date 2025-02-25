@@ -58,8 +58,8 @@ const router = createBrowserRouter([
   },
 ]);
 
-function Axioshop18() {
+function Project() {
   return <RouterProvider router={router} />;
 }
 
-export default Axioshop18;
+export default Project;

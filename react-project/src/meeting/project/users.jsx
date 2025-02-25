@@ -1,76 +1,120 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // Impor Link dari react-router-dom
+import { Link } from "react-router-dom";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 export default function UserList() {
-  const [users, setUsers] = useState([]); // State untuk menyimpan data user
-  const [loading, setLoading] = useState(true); // State untuk loading
-  const [error, setError] = useState(""); // State untuk error
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Fetch data user dari API saat komponen dimuat
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { duration: 0.8, staggerChildren: 0.2 },
+    },
+    exit: { opacity: 0, transition: { duration: 0.5 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
   useEffect(() => {
     axios
-      .get("https://api.escuelajs.co/api/v1/users") // Ambil data dari API
+      .get("https://api.escuelajs.co/api/v1/users")
       .then((response) => {
-        setUsers(response.data); // Simpan data user ke state
-        setLoading(false); // Matikan loading
+        setUsers(response.data);
+        setLoading(false);
       })
       .catch((error) => {
-        setError("Error fetching users: " + error.message); // Set error jika gagal
+        setError("Error fetching users: " + error.message);
         setLoading(false);
       });
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-      {/* Tombol Kembali */}
-      <div className="w-full flex justify-start mb-6">
+    <motion.div
+      className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-pink-200 via-pink-300 to-pink-400 p-4" // Gradient pink
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+      <motion.div
+        className="w-full flex justify-start mb-8"
+        variants={itemVariants}
+      >
         <Link to="/help">
-          <button className="px-6 py-3 bg-pink-600 text-white rounded-full shadow-lg hover:bg-pink-800 transition duration-300 ease-in-out transform hover:scale-105">
+          <motion.button
+            className="px-6 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-lg shadow-lg hover:scale-105 transition duration-300"
+            whileHover={{ scale: 1.1 }}
+          >
             Kembali
-          </button>
+          </motion.button>
         </Link>
-      </div>
+      </motion.div>
 
-      <h1 className="text-3xl font-bold text-gray-700 mb-6">User List</h1>
+      <motion.h1
+        className="text-3xl font-bold text-gray-800 mb-8 animate-pulse"
+        variants={itemVariants}
+      >
+        User List
+      </motion.h1>
 
-      {/* Loading & Error Message */}
-      {loading && <p className="text-lg text-blue-500">Loading users...</p>}
-      {error && <p className="text-lg text-red-500">{error}</p>}
+      {loading && (
+        <p className="text-lg text-blue-500" variants={itemVariants}>
+          Loading users...
+        </p>
+      )}
+      {error && (
+        <p className="text-lg text-red-500" variants={itemVariants}>
+          {error}
+        </p>
+      )}
 
-      {/* Menampilkan daftar user dengan .map() */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {users.length > 0
-          ? users.map((user) => (
-              <div
-                key={user.id}
-                className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center text-center"
-              >
-                {/* Avatar User */}
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="w-24 h-24 rounded-full border border-gray-300"
-                />
-
-                {/* Informasi User */}
-                <h2 className="text-xl font-bold mt-2">{user.name}</h2>
-                <p className="text-gray-600">
-                  <strong>Email:</strong> {user.email}
-                </p>
-                <p className="text-gray-500">
-                  <strong>Password:</strong> {user.password || "********"}
-                </p>
-                <p className="text-gray-500 text-sm mt-1">
-                  <strong>Role:</strong> {user.role}
-                </p>
-                <p className="text-gray-500 text-sm mt-1">
-                  <strong>ID:</strong> {user.id} {/* Menampilkan ID user */}
-                </p>
-              </div>
-            ))
-          : !loading && <p className="text-gray-500">No users found.</p>}
-      </div>
-    </div>
+      <motion.div
+        className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+        variants={itemVariants}
+      >
+        {users.length > 0 ? (
+          users.map((user) => (
+            <motion.div
+              key={user.id}
+              className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center text-center hover:scale-105 transition duration-300"
+              variants={itemVariants}
+              whileHover={{ scale: 1.05 }}
+            >
+              <img
+                src={user.avatar}
+                alt={user.name}
+                className="w-24 h-24 rounded-full border border-gray-300 mb-4"
+              />
+              <h2 className="text-xl font-bold text-gray-800 mb-2">
+                {user.name}
+              </h2>
+              <p className="text-gray-600 mb-1">
+                <strong>Email:</strong> {user.email}
+              </p>
+              <p className="text-gray-600 mb-1">
+                <strong>Password:</strong> {user.password || "********"}
+              </p>
+              <p className="text-gray-600 text-sm">
+                <strong>Role:</strong> {user.role}
+              </p>
+              <p className="text-gray-600 text-sm">
+                <strong>ID:</strong> {user.id}
+              </p>
+            </motion.div>
+          ))
+        ) : !loading ? (
+          <p className="text-gray-600" variants={itemVariants}>
+            No users found.
+          </p>
+        ) : null}
+      </motion.div>
+    </motion.div>
   );
 }

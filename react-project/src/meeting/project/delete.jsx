@@ -1,61 +1,95 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function DeleteAcc() {
   const [id, setId] = useState("");
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // Untuk tombol kembali
+  const navigate = useNavigate();
 
-  // Fungsi untuk menghapus data pengguna
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.8 } },
+    exit: { opacity: 0, transition: { duration: 0.5 } },
+  };
+
+  const formVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.2 } },
+  };
+
   const handleDeleteUser = (e) => {
     e.preventDefault();
 
-    // Mengirim permintaan DELETE ke API
     axios
       .delete(`https://api.escuelajs.co/api/v1/users/${id}`)
       .then(() => setMessage(`✅ User deleted successfully`))
       .catch((error) => setMessage(`❌ Error: ${error.message}`));
 
-    // Reset form
     setId("");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
+    <motion.div
+      className="min-h-screen flex items-center justify-center bg-gradient-to-r  from-red-300 via-red-400 to-red-500 p-4" // Gradient Ungu-Merah
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+      <motion.div
+        className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md backdrop-blur-md bg-opacity-80"
+        variants={formVariants}
+      >
         <Link
           to="/help"
-          className="inline-block mb-4 text-blue-500 hover:text-blue-700"
+          className="inline-block mb-6 text-blue-500 hover:text-blue-700 transition duration-300"
+          variants={formVariants}
+          whileHover={{ scale: 1.1 }}
         >
           &larr; Back
         </Link>
-        <h1 className="text-2xl font-bold text-gray-700 mb-4 text-center">
+        <motion.h1
+          className="text-3xl font-bold text-gray-800 mb-8 text-center"
+          variants={formVariants}
+        >
           Delete User
-        </h1>
+        </motion.h1>
 
-        {/* Form Delete User */}
-        <form onSubmit={handleDeleteUser} className="space-y-4">
+        <form
+          onSubmit={handleDeleteUser}
+          className="space-y-6"
+          variants={formVariants}
+        >
           <input
             type="text"
             placeholder="Enter User ID"
             value={id}
             onChange={(e) => setId(e.target.value)}
             required
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300"
           />
 
-          <button
+          <motion.button
             type="submit"
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded transition duration-200"
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition duration-300"
+            whileHover={{ scale: 1.05 }}
+            variants={formVariants}
           >
             Delete User
-          </button>
+          </motion.button>
         </form>
 
-        {/* Menampilkan Pesan Sukses/Error */}
-        {message && <p className="mt-4 font-semibold">{message}</p>}
-      </div>
-    </div>
+        {message && (
+          <motion.p
+            className="mt-6 font-semibold text-center text-gray-700"
+            variants={formVariants}
+          >
+            {message}
+          </motion.p>
+        )}
+      </motion.div>
+    </motion.div>
   );
 }

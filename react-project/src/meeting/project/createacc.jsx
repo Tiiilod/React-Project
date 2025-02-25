@@ -1,21 +1,32 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Create() {
-  // State untuk form data
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: "customer", // default role
-    avatar: "https://i.imgur.com/LDOO4Qs.jpg", // default avatar
+    role: "customer",
+    avatar: "https://i.imgur.com/LDOO4Qs.jpg",
   });
 
-  // State untuk pesan hasil request
   const [message, setMessage] = useState("");
 
-  // Fungsi untuk mengubah input form
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.8 } },
+    exit: { opacity: 0, transition: { duration: 0.5 } },
+  };
+
+  const formVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.2 } },
+  };
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -23,22 +34,22 @@ export default function Create() {
     });
   };
 
-  // Fungsi untuk mengirim data ke API
   const handleCreateUser = (e) => {
     e.preventDefault();
 
     const newUser = {
       ...formData,
-      creationAt: new Date().toISOString(), // Tambah waktu pembuatan
-      updatedAt: new Date().toISOString(), // Tambah waktu perubahan
+      creationAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     axios
       .post("https://api.escuelajs.co/api/v1/users", newUser)
-      .then((response) => setMessage(`✅ User created: ${response.data.name}`))
+      .then((response) => {
+        setMessage(`✅ User created: ${response.data.name}`);
+      })
       .catch((error) => setMessage(`❌ Error: ${error.message}`));
 
-    // Reset form setelah submit
     setFormData({
       name: "",
       email: "",
@@ -48,22 +59,43 @@ export default function Create() {
     });
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
-        {/* Back Button */}
-        <Link
-          to="/help"
-          className="inline-block mb-4 text-blue-500 hover:text-blue-700"
+    <motion.div
+      className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-200 via-blue-300 to-blue-400 p-4" // Gradient biru
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+      <motion.div
+        className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md backdrop-blur-md bg-opacity-80"
+        variants={formVariants}
+      >
+        <motion.button
+          onClick={handleBack}
+          className="mb-6 text-blue-500 hover:text-blue-700 transition duration-300"
+          whileHover={{ scale: 1.1 }}
+          variants={formVariants}
         >
           &larr; Back
-        </Link>
-        <h2 className="text-2xl font-bold text-gray-700 text-center mb-4">
-          Create User
-        </h2>
+        </motion.button>
 
-        {/* Form */}
-        <form onSubmit={handleCreateUser} className="space-y-4">
+        <motion.h2
+          className="text-3xl font-bold text-gray-800 text-center mb-8"
+          variants={formVariants}
+        >
+          Create User
+        </motion.h2>
+
+        <form
+          onSubmit={handleCreateUser}
+          className="space-y-6"
+          variants={formVariants}
+        >
           <input
             type="text"
             name="name"
@@ -71,7 +103,7 @@ export default function Create() {
             onChange={handleChange}
             placeholder="Name"
             required
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
           />
 
           <input
@@ -81,7 +113,7 @@ export default function Create() {
             onChange={handleChange}
             placeholder="Email"
             required
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
           />
 
           <input
@@ -91,22 +123,28 @@ export default function Create() {
             onChange={handleChange}
             placeholder="Password"
             required
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
           />
 
-          <button
+          <motion.button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-300"
+            whileHover={{ scale: 1.05 }}
+            variants={formVariants}
           >
             Create User
-          </button>
+          </motion.button>
         </form>
 
-        {/* Message Display */}
         {message && (
-          <p className="text-center mt-4 text-sm font-semibold">{message}</p>
+          <motion.p
+            className="text-center mt-6 text-sm font-semibold text-gray-700"
+            variants={formVariants}
+          >
+            {message}
+          </motion.p>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
