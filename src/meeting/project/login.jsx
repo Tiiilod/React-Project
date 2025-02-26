@@ -60,7 +60,7 @@ const LoginMas = () => {
         <h1 className="text-3xl font-extrabold text-center mb-8 text-indigo-700 animate-pulse">
           {" "}
           {/* Added animation */}
-          Welcome Back!
+          Hello, Welcome !
         </h1>
         <p className="text-center text-gray-500 mb-6">
           Silakan login untuk mengakses akun Anda
